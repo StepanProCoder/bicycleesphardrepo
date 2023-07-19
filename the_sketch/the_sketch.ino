@@ -5,6 +5,9 @@ std::unique_ptr<Gerkon> gerkon;
 void setup() {
   Serial.begin(9600);  // открыть порт для связи по UART
   delay(100);
+
+  Serial.println("THIS IS ARCHITECTURE");
+
   gerkon = std::make_unique<Gerkon>("speed", "0.0");
 }
 
@@ -17,5 +20,5 @@ void loop() {
   Serial.println(" km/h");
 
   MDNS.update();
-  gerkon->host.server.handleClient(); // Обработка запросов клиентов
+  gerkon->host->server.handleClient(); // Обработка запросов клиентов
 }

@@ -1,7 +1,6 @@
 #include "Connectable.h"
 
-void Connectable::connect() {
-    const char* hostname = "SpeedESP";
+void Connectable::connect(const char* hostname) {
     WiFiManager wifiManager;
 
     // Попытка подключения к существующей Wi-Fi сети

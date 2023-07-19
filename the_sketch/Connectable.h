@@ -7,7 +7,7 @@
 class Connectable {
 public:
     virtual ~Connectable() = default;
-    virtual void connect();
+    virtual void connect(const char* hostname);
 };
 
 #endif
