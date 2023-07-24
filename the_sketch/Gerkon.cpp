@@ -10,12 +10,12 @@ void ICACHE_RAM_ATTR Gerkon::sens() {
   }
 }
 
-void Gerkon::handleTicks() {
-    attachInterrupt(digitalPinToInterrupt(4), [this]() {Gerkon::sens();}, RISING); // подключить прерывание на пин D2 при повышении сигнала
+void Gerkon::handle_ticks() {
+    Gerkon::check_staying();
 }
 
 Gerkon::Gerkon(const std::string& arg, const std::string& val) {
-    Gerkon::handleTicks();
+    attachInterrupt(digitalPinToInterrupt(4), [this]() {Gerkon::sens();}, RISING); // подключить прерывание на пин D2 при повышении сигнала
     connect(hostname);
     host = std::make_unique<Host>(arg, val);
 }

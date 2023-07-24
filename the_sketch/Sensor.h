@@ -6,7 +6,7 @@
 class Sensor: public Connectable {
 public:
     virtual ~Sensor() = default;
-    virtual void handleTicks() = 0;
+    virtual void handle_ticks() = 0;
 };
 
 #endif

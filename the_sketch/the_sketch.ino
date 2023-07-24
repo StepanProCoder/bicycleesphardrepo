@@ -13,7 +13,7 @@ void setup() {
 
 void loop() {
  
-  gerkon->check_staying();
+  gerkon->handle_ticks();
 
   Serial.print("Speed: ");  // выводим скорость
   Serial.print(gerkon->get_speed());

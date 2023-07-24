@@ -15,7 +15,7 @@ class Gerkon: public Sensor {
     float SPEED; // переменная хранения скорости в виде десятичной дроби
     float w_length = 2.050;  // длина окружности колеса в метрах
 
-    void handleTicks() override;
+    void handle_ticks() override;
 
   private:
     const char* hostname = "SpeedESP";
