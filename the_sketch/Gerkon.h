@@ -2,7 +2,8 @@
 #define GERKON_H
 
 #include "Sensor.h"
-#include "Host.h"
+#include <functional>
+#include <FunctionalInterrupt.h>
 
 class Gerkon: public Sensor {
 
@@ -11,14 +12,12 @@ class Gerkon: public Sensor {
     void ICACHE_RAM_ATTR sens();
     void check_staying();
     float get_speed();
-    std::unique_ptr<Host> host;
     float SPEED; // переменная хранения скорости в виде десятичной дроби
     float w_length = 2.050;  // длина окружности колеса в метрах
 
     void handle_ticks() override;
 
   private:
-    const char* hostname = "SpeedESP";
     unsigned int min_speed = 0;   // минимальная отображаемая скорость, км/ч
     unsigned int max_speed = 40;  // максимальная отображаемая скорость, км/ч
     unsigned long lastturn;  // переменная хранения времени последнего оборота

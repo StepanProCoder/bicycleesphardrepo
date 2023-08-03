@@ -1,5 +1,7 @@
 #include "Gerkon.h"
+#include "Host.h"
 
+std::unique_ptr<Host> host;
 std::unique_ptr<Gerkon> gerkon;
 
 void setup() {
@@ -9,6 +11,7 @@ void setup() {
   Serial.println("THIS IS ARCHITECTURE");
 
   gerkon = std::make_unique<Gerkon>("speed", "0.0");
+  host = std::make_unique<Host>("speed", "0.0");
 }
 
 void loop() {
@@ -20,5 +23,5 @@ void loop() {
   Serial.println(" km/h");
 
   MDNS.update();
-  gerkon->host->server.handleClient(); // Обработка запросов клиентов
+  host->server->handleClient(); // Обработка запросов клиентов
 }
