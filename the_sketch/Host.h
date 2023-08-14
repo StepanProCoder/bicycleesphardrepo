@@ -8,14 +8,12 @@
 
 class Host: public Connectable{
 public:
-    Host(const std::string& arg, const std::string& val);
-    void setVal(const std::string& val);
+    Host();
     std::unique_ptr<ESP8266WebServer> server;
 private:
     const char* hostname = "SpeedESP";
-    std::string arg;
-    std::string val;
     void handle_root();
+    void handle_post();
 };
 
 #endif

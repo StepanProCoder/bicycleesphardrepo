@@ -1,17 +1,22 @@
 #include "Host.h"
 #include "Gerkon.h"
+#include "SensorFactory.h" 
+
+bool jsonConfigReceived = false; // Flag to track if JSON config is received
+std::vector<std::unique_ptr<Sensor>> sensorList; // Array to store created sensors
 
 void Host::handle_root() {
-    StaticJsonDocument<200> jsonDoc;
-  
-    // Создаем список смарт-указателей на объекты Sensor
-    std::vector<std::unique_ptr<Sensor>> sensorList;
-    sensorList.push_back(std::make_unique<Gerkon>("speedo", "5.0"));
+    if (!jsonConfigReceived) {
+        server->send(200, "text/plain", "Waiting for JSON config...");
+        return;
+    }
 
-    // Создаем JSON-массив
+    StaticJsonDocument<200> jsonDoc;
+
+    // Create JSON array of sensors
     JsonArray jsonArray = jsonDoc.to<JsonArray>();
 
-    // Добавляем объекты SensorData в JSON-массив
+    // Add sensor data to JSON array
     for (const auto& sensor : sensorList) {
         JsonObject sensorObject = jsonArray.createNestedObject();
         sensorObject["sensor_type"] = sensor->get_sensor_type();
@@ -24,14 +29,18 @@ void Host::handle_root() {
     server->send(200, "application/json", jsonString);
 }
 
-Host::Host(const std::string& arg, const std::string& val) : arg(arg), val(val) {
-  connect(hostname);
-  
-  server = std::make_unique<ESP8266WebServer>(80);
-  server->on("/sensors/", std::bind(&Host::handle_root, this)); // Установка обработчика для корневого URL-пути
-  server->begin(); // Запуск HTTP-сервера
+void Host::handle_post() {
+    String body = server->arg("plain");
+    sensorList = SensorFactory::createSensorsFromJson(body.c_str());
+    jsonConfigReceived = true;
+    server->send(200, "text/plain", "JSON config received!");
 }
 
-void Host::setVal(const std::string& val) {
-    this->val = val;
+Host::Host() {
+    connect(hostname);
+
+    server = std::make_unique<ESP8266WebServer>(80);
+    server->on("/sensors/", HTTP_POST, std::bind(&Host::handle_post, this)); // POST request handler
+    server->on("/sensors/", HTTP_GET, std::bind(&Host::handle_root, this));  // GET request handler
+    server->begin(); // Start HTTP server
 }
