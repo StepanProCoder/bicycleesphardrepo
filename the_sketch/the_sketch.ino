@@ -20,6 +20,7 @@ void loop() {
   // Serial.print(gerkon->get_speed());
   // Serial.println(" km/h");
 
-  MDNS.update();
+  if(!host->get_is_posted())
+    MDNS.update();
   host->server->handleClient(); // Обработка запросов клиентов
 }

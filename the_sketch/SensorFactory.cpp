@@ -15,6 +15,7 @@ std::vector<std::unique_ptr<Sensor>> createSensorsFromJson(const char* json) {
     if (doc["hasSpeedometer"]) {
         int pin = doc["speedometerText"];
         float wheelRadius = doc["wheelRadius"];
+        wheelRadius /= 100;
         std::string sensor_type = "Gerkon"; // Set the sensor type
         sensors.push_back(std::make_unique<Gerkon>(pin, calculateWheelLength(wheelRadius), sensor_type));
     }
