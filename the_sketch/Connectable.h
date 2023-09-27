@@ -8,17 +8,23 @@
 #include <EEPROM.h>
 #include <ESP8266TimerInterrupt.h>
 #include <ArduinoJson.h>
+#include "EEPROMS.h"
 
 class Connectable {
 public:
     virtual ~Connectable() = default;
     Connectable();
     virtual void connect(const char* hostname);
+    std::string get_saved_id();
     std::unique_ptr<ESP8266WebServer> server;
 private:
-    String readFromEEPROM(int address, int size);
-    void writeToEEPROM(int address, String value, int size);
     void createAPMode();
+    const int ssidAddr = 0;      // Адрес начала сохранения SSID
+    const int passwordAddr = 64; // Адрес начала сохранения пароля
+    const int idAddr = 128;      // Адрес начала сохранения уникального идентификатора
+    std::string savedSSID;
+    std::string savedPassword;
+    std::string savedID;
 };
 
 #endif
