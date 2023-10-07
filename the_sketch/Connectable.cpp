@@ -73,8 +73,12 @@ void Connectable::connect(const char* hostname) {
 
   server->begin();
 
+  std::string combinedHost = hostname;
+  combinedHost += "-" + get_saved_id();
+
+
   //Настройка mDNS
-  if (!MDNS.begin(hostname)) {
+  if (!MDNS.begin(combinedHost.c_str())) {
     Serial.println("Error setting up mDNS");
     return;
   }
@@ -84,7 +88,7 @@ void Connectable::connect(const char* hostname) {
 
 void Connectable::createAPMode() {
   Serial.println("Точка доступа не найдена. Создание точки доступа.");
-  WiFi.softAP("ESP-AP", "password123"); // Имя и пароль точки доступа
+  WiFi.softAP(hostname); // Имя и пароль точки доступа
 
   IPAddress apIP = WiFi.softAPIP();
   Serial.print("IP адрес точки доступа: ");

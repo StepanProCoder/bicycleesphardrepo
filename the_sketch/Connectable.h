@@ -25,6 +25,8 @@ private:
     std::string savedSSID;
     std::string savedPassword;
     std::string savedID;
+protected:
+    const char* hostname = "SpeedESP";
 };
 
 #endif

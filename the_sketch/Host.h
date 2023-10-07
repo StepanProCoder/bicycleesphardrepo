@@ -14,7 +14,6 @@ public:
     Host();
     bool get_is_posted();
 private:
-    const char* hostname = "SpeedESP";
     bool is_posted = false;
     std::vector<std::unique_ptr<Sensor>> sensor_list; 
     void handle_root();
