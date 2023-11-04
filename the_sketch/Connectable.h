@@ -8,6 +8,7 @@
 #include <EEPROM.h>
 #include <ESP8266TimerInterrupt.h>
 #include <ArduinoJson.h>
+#include <FunctionalInterrupt.h>
 #include "EEPROMS.h"
 
 class Connectable {
@@ -27,6 +28,9 @@ private:
     std::string savedID;
 protected:
     const char* hostname = "SpeedESP";
+    void read_all();
+    void save_all(std::string ssid, std::string password, std::string id);
+    void reset_btn_pressed();
 };
 
 #endif

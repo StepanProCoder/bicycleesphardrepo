@@ -26,8 +26,16 @@ void Host::handle_root() {
 
 void Host::handle_post() {
     String body = server->arg("plain");
-    sensor_list = SensorFactory::createSensorsFromJson(body.c_str());
-    is_posted = true;
+    Serial.println(body.c_str());
+
+    if(!strcmp(body.c_str(), "ERASE")) {
+      Serial.println("RESETTING");
+      reset_btn_pressed();
+    } 
+    else {
+      sensor_list = SensorFactory::createSensorsFromJson(body.c_str());
+      is_posted = true;
+    }
     //server->send(200, "text/plain", "JSON config received!");
     handle_root();
 }

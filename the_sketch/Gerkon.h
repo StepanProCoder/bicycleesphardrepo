@@ -10,7 +10,7 @@
 class Gerkon: public Sensor {
 
   public:
-    Gerkon(int pin, float w_length, const std::string& sensor_type); 
+    Gerkon(std::optional<int> pin, float w_length, const std::string& sensor_type); 
     void ICACHE_RAM_ATTR sens();
     static void check_staying();
     void set_speed(float speed);

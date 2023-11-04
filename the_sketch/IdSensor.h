@@ -7,7 +7,7 @@
 
 class IdSensor: public Sensor {
   public:
-    IdSensor(int pin, const std::string& sensor_type);
+    IdSensor(std::optional<int> pin, const std::string& sensor_type);
     void handle_ticks() override;
     std::string get_saved_id();
   private:

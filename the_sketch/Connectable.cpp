@@ -1,6 +1,8 @@
 #include "Connectable.h"
 
 Connectable::Connectable() {
+  pinMode(5, INPUT_PULLUP);
+  attachInterrupt(digitalPinToInterrupt(5), [this]() {Connectable::reset_btn_pressed(); Serial.println("ERASED");}, FALLING);
   server = std::make_unique<ESP8266WebServer>(80);
 }
 
@@ -13,14 +15,7 @@ void Connectable::connect(const char* hostname) {
   WiFi.mode(WIFI_STA);
   EEPROM.begin(512);
 
-  // EEPROMS::writeToEEPROM(ssidAddr, "", 64); // 64 - максимальная длина SSID
-  // EEPROMS::writeToEEPROM(passwordAddr, "", 64); // 64 - максимальная длина пароля
-  // EEPROMS::writeToEEPROM(idAddr, "", 64); // 64 - максимальная длина уникального идентификатора
-  
-  // Чтение данных из EEPROM
-  savedSSID = EEPROMS::readFromEEPROM(ssidAddr, 64);
-  savedPassword = EEPROMS::readFromEEPROM(passwordAddr, 64);
-  savedID = EEPROMS::readFromEEPROM(idAddr, 64);
+  read_all();
 
   Serial.println(savedSSID.c_str());
   
@@ -61,9 +56,8 @@ void Connectable::connect(const char* hostname) {
       Serial.println("ID: " + String(id));
 
       // Сохранение SSID, пароля и уникального идентификатора в EEPROM
-      EEPROMS::writeToEEPROM(ssidAddr, ssid, 64); // 64 - максимальная длина SSID
-      EEPROMS::writeToEEPROM(passwordAddr, password, 64); // 64 - максимальная длина пароля
-      EEPROMS::writeToEEPROM(idAddr, id, 64); // 64 - максимальная длина уникального идентификатора
+      save_all(ssid, password, id);
+      read_all();
 
       server->send(200, "text/plain", "Данные сохранены");
       server->close();
@@ -84,6 +78,23 @@ void Connectable::connect(const char* hostname) {
   }
   Serial.println("mDNS responder started");
   MDNS.addService("http", "tcp", 80);
+}
+
+void Connectable::reset_btn_pressed() {
+  save_all("","","");
+  read_all();
+}
+
+void Connectable::read_all() {
+  savedSSID = EEPROMS::readFromEEPROM(ssidAddr, 64);
+  savedPassword = EEPROMS::readFromEEPROM(passwordAddr, 64);
+  savedID = EEPROMS::readFromEEPROM(idAddr, 64);
+}
+
+void Connectable::save_all(std::string ssid, std::string password, std::string id) {
+  EEPROMS::writeToEEPROM(ssidAddr, ssid, 64); // 64 - максимальная длина SSID
+  EEPROMS::writeToEEPROM(passwordAddr, password, 64); // 64 - максимальная длина пароля
+  EEPROMS::writeToEEPROM(idAddr, id, 64); // 64 - максимальная длина уникального идентификатора
 }
 
 void Connectable::createAPMode() {

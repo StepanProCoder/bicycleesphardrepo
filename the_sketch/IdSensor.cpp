@@ -1,6 +1,6 @@
 #include "IdSensor.h"
 
-IdSensor::IdSensor(int pin, const std::string& sensor_type): Sensor(pin, sensor_type) {
+IdSensor::IdSensor(std::optional<int> pin, const std::string& sensor_type): Sensor(pin, sensor_type) {
   handle_ticks();
   set_data(saved_id);
 }
