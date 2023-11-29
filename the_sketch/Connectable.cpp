@@ -1,4 +1,5 @@
 #include "Connectable.h"
+#include "uuid.h"
 
 Connectable::Connectable() {
   pinMode(5, INPUT_PULLUP);
@@ -8,6 +9,11 @@ Connectable::Connectable() {
 
 std::string Connectable::get_saved_id() {
  return savedID;
+ //return StringUUIDGen();
+}
+
+std::string Connectable::get_saved_uuid() {
+  return savedUUID;
 }
 
 void Connectable::connect(const char* hostname) {
@@ -50,16 +56,18 @@ void Connectable::connect(const char* hostname) {
       const char* ssid = doc["ssid"];
       const char* password = doc["password"];
       const char* id = doc["id"];
+      std::string uuid = StringUUIDGen();
 
       Serial.println("SSID: " + String(ssid));
       Serial.println("Пароль: " + String(password));
       Serial.println("ID: " + String(id));
+      Serial.println("UUID: " + String(uuid.c_str()));
 
       // Сохранение SSID, пароля и уникального идентификатора в EEPROM
-      save_all(ssid, password, id);
+      save_all(ssid, password, id, uuid);
       read_all();
 
-      server->send(200, "text/plain", "Данные сохранены");
+      server->send(200, "text/plain", savedUUID.c_str());
       server->close();
     }
 
@@ -67,21 +75,17 @@ void Connectable::connect(const char* hostname) {
 
   server->begin();
 
-  std::string combinedHost = hostname;
-  combinedHost += "-" + get_saved_id();
-
-
   //Настройка mDNS
-  if (!MDNS.begin(combinedHost.c_str())) {
+  if (!MDNS.begin(savedUUID.c_str())) {
     Serial.println("Error setting up mDNS");
     return;
   }
   Serial.println("mDNS responder started");
-  MDNS.addService("http", "tcp", 80);
+  MDNS.addService("speedesp", "tcp", 80);
 }
 
 void Connectable::reset_btn_pressed() {
-  save_all("","","");
+  save_all("","","","");
   read_all();
 }
 
@@ -89,12 +93,14 @@ void Connectable::read_all() {
   savedSSID = EEPROMS::readFromEEPROM(ssidAddr, 64);
   savedPassword = EEPROMS::readFromEEPROM(passwordAddr, 64);
   savedID = EEPROMS::readFromEEPROM(idAddr, 64);
+  savedUUID = EEPROMS::readFromEEPROM(uuidAddr, 64);
 }
 
-void Connectable::save_all(std::string ssid, std::string password, std::string id) {
+void Connectable::save_all(std::string ssid, std::string password, std::string id, std::string uuid) {
   EEPROMS::writeToEEPROM(ssidAddr, ssid, 64); // 64 - максимальная длина SSID
   EEPROMS::writeToEEPROM(passwordAddr, password, 64); // 64 - максимальная длина пароля
   EEPROMS::writeToEEPROM(idAddr, id, 64); // 64 - максимальная длина уникального идентификатора
+  EEPROMS::writeToEEPROM(uuidAddr, uuid, 64);
 }
 
 void Connectable::createAPMode() {

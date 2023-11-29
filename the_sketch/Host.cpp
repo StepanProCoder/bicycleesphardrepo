@@ -30,6 +30,7 @@ void Host::handle_post() {
 
     if(!strcmp(body.c_str(), "ERASE")) {
       Serial.println("RESETTING");
+      server->send(200, "text/plain", "RESETTING");
       reset_btn_pressed();
     } 
     else {
