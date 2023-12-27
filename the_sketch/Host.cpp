@@ -31,14 +31,14 @@ void Host::handle_post() {
     if(!strcmp(body.c_str(), "ERASE")) {
       Serial.println("RESETTING");
       server->send(200, "text/plain", "RESETTING");
+      server->close();
       reset_btn_pressed();
     } 
     else {
       sensor_list = SensorFactory::createSensorsFromJson(body.c_str());
       is_posted = true;
+      handle_root();
     }
-    //server->send(200, "text/plain", "JSON config received!");
-    handle_root();
 }
 
 Host::Host(): Connectable() {

@@ -5,11 +5,10 @@
 #include <WiFiManager.h>
 #include <ESP8266WiFi.h>
 #include <ESP8266WebServer.h>
-#include <EEPROM.h>
 #include <ESP8266TimerInterrupt.h>
 #include <ArduinoJson.h>
 #include <FunctionalInterrupt.h>
-#include "EEPROMS.h"
+#include <Preferences.h>
 
 class Connectable {
 public:
@@ -21,10 +20,11 @@ public:
     std::unique_ptr<ESP8266WebServer> server;
 private:
     void createAPMode();
-    const int ssidAddr = 0;      // Адрес начала сохранения SSID
-    const int passwordAddr = 64; // Адрес начала сохранения пароля
-    const int idAddr = 128;      // Адрес начала сохранения уникального идентификатора
-    const int uuidAddr = 192;
+    Preferences prefs;
+    const char* ssidKey = "ssid";
+    const char* passwordKey = "password";
+    const char* idKey = "id";
+    const char* uuidKey = "uuid";
     std::string savedSSID;
     std::string savedPassword;
     std::string savedID;

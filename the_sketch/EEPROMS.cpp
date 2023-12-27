@@ -12,6 +12,7 @@ std::string EEPROMS::readFromEEPROM(int address, int size) {
 }
 
 void EEPROMS::writeToEEPROM(int address, std::string value, int size) {
+  
   for (int i = 0; i < size; i++) {
     if (i < value.length()) {
       EEPROM.write(address + i, value[i]);

@@ -1,6 +1,8 @@
 #include "Gerkon.h"
 #include "Host.h"
 
+#include <EEPROM.h>
+
 std::unique_ptr<Host> host;
 
 void setup() {

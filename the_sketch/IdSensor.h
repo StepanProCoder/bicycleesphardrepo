@@ -2,8 +2,8 @@
 #define IDSENSOR_H
 
 #include "Sensor.h"
-#include "EEPROMS.h"
 #include <string.h>
+#include <Preferences.h>
 
 class IdSensor: public Sensor {
   public:
@@ -11,8 +11,8 @@ class IdSensor: public Sensor {
     void handle_ticks() override;
     std::string get_saved_id();
   private:
+    Preferences prefs;
     std::string saved_id;
-    const int id_addr = 128;
 };
 
 #endif

@@ -5,6 +5,7 @@ Connectable::Connectable() {
   pinMode(5, INPUT_PULLUP);
   attachInterrupt(digitalPinToInterrupt(5), [this]() {Connectable::reset_btn_pressed(); Serial.println("ERASED");}, FALLING);
   server = std::make_unique<ESP8266WebServer>(80);
+  prefs.begin("SpeedESP");
 }
 
 std::string Connectable::get_saved_id() {
@@ -19,11 +20,12 @@ std::string Connectable::get_saved_uuid() {
 void Connectable::connect(const char* hostname) {
 
   WiFi.mode(WIFI_STA);
-  EEPROM.begin(512);
-
   read_all();
 
   Serial.println(savedSSID.c_str());
+  Serial.println(savedPassword.c_str());
+  Serial.println(savedID.c_str());
+  Serial.println(savedUUID.c_str());
   
   if (savedSSID.c_str()[0] == '\0' || savedPassword.c_str()[0] == '\0') {
     //Если данные отсутствуют, создаем точку доступа
@@ -68,7 +70,10 @@ void Connectable::connect(const char* hostname) {
       read_all();
 
       server->send(200, "text/plain", savedUUID.c_str());
+      
       server->close();
+      delay(100);
+      ESP.restart();
     }
 
   });
@@ -85,22 +90,23 @@ void Connectable::connect(const char* hostname) {
 }
 
 void Connectable::reset_btn_pressed() {
-  save_all("","","","");
+  prefs.clear();
   read_all();
+  ESP.restart();
 }
 
 void Connectable::read_all() {
-  savedSSID = EEPROMS::readFromEEPROM(ssidAddr, 64);
-  savedPassword = EEPROMS::readFromEEPROM(passwordAddr, 64);
-  savedID = EEPROMS::readFromEEPROM(idAddr, 64);
-  savedUUID = EEPROMS::readFromEEPROM(uuidAddr, 64);
+  savedSSID = std::string(prefs.getString(ssidKey, "").c_str());
+  savedPassword = std::string(prefs.getString(passwordKey, "").c_str());
+  savedID = std::string(prefs.getString(idKey, "").c_str());
+  savedUUID = std::string(prefs.getString(uuidKey, "").c_str());
 }
 
 void Connectable::save_all(std::string ssid, std::string password, std::string id, std::string uuid) {
-  EEPROMS::writeToEEPROM(ssidAddr, ssid, 64); // 64 - максимальная длина SSID
-  EEPROMS::writeToEEPROM(passwordAddr, password, 64); // 64 - максимальная длина пароля
-  EEPROMS::writeToEEPROM(idAddr, id, 64); // 64 - максимальная длина уникального идентификатора
-  EEPROMS::writeToEEPROM(uuidAddr, uuid, 64);
+  prefs.putString(ssidKey, String(ssid.c_str()));
+  prefs.putString(passwordKey, String(password.c_str()));
+  prefs.putString(idKey, String(id.c_str()));
+  prefs.putString(uuidKey, String(uuid.c_str()));
 }
 
 void Connectable::createAPMode() {
