@@ -1,6 +1,8 @@
 #include "Gerkon.h"
 #include "Host.h"
 
+#include <EEPROM.h>
+
 std::unique_ptr<Host> host;
 
 void setup() {
@@ -13,14 +15,11 @@ void setup() {
 }
 
 void loop() {
- 
-  // gerkon->handle_ticks();
-
-  // Serial.print("Speed: ");  // выводим скорость
-  // Serial.print(gerkon->get_speed());
-  // Serial.println(" km/h");
-
-  if(!host->get_is_posted())
+  
+  //if(!host->get_is_posted()) {
+    //Serial.println("MDNS!!!");
     MDNS.update();
+  //}
+    
   host->server->handleClient(); // Обработка запросов клиентов
 }

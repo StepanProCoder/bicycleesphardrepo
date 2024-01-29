@@ -3,7 +3,13 @@
 
 #include <vector>
 #include <memory>
+#include <ArduinoJson.h>
+#include <string>
+#include <cmath>
+#include <optional>
 #include "Sensor.h"
+#include "Gerkon.h"
+#include "IdSensor.h"
 
 namespace SensorFactory {
 

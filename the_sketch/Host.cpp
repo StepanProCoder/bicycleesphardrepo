@@ -26,19 +26,29 @@ void Host::handle_root() {
 
 void Host::handle_post() {
     String body = server->arg("plain");
-    sensor_list = SensorFactory::createSensorsFromJson(body.c_str());
-    is_posted = true;
-    //server->send(200, "text/plain", "JSON config received!");
-    handle_root();
+    Serial.println(body.c_str());
+
+    if(!strcmp(body.c_str(), "ERASE")) {
+      Serial.println("RESETTING");
+      server->send(200, "text/plain", "RESETTING");
+      server->close();
+      reset_btn_pressed();
+    } 
+    else {
+      sensor_list = SensorFactory::createSensorsFromJson(body.c_str());
+      is_posted = true;
+      handle_root();
+    }
 }
 
-Host::Host() {
+Host::Host(): Connectable() {
+    Serial.println("host consructor started");
     connect(hostname);
-
-    server = std::make_unique<ESP8266WebServer>(80);
+    Serial.println("connect over");
     server->on("/sensors/", HTTP_POST, std::bind(&Host::handle_post, this)); // POST request handler
     server->on("/sensors/", HTTP_GET, std::bind(&Host::handle_root, this));  // GET request handler
     server->begin(); // Start HTTP server
+    Serial.println("host consructor over");
 }
 
 bool Host::get_is_posted() {

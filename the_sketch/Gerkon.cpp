@@ -11,11 +11,11 @@ void ICACHE_RAM_ATTR Gerkon::sens() {
 }
 
 void Gerkon::handle_ticks() {
-    attachInterrupt(digitalPinToInterrupt(get_pin()), [this]() {Gerkon::sens();}, RISING); // подключить прерывание на пин D2 при повышении сигнала
+    attachInterrupt(digitalPinToInterrupt(get_pin().value()), [this]() {Gerkon::sens();}, RISING); // подключить прерывание на пин D2 при повышении сигнала
     timer.attachInterruptInterval(CHECK_INTERVAL, check_staying);
 }
 
-Gerkon::Gerkon(int pin, float w_length, const std::string& sensor_type): Sensor(pin, sensor_type) {
+Gerkon::Gerkon(std::optional<int> pin, float w_length, const std::string& sensor_type): Sensor(pin, sensor_type) {
     this->w_length = w_length;
     this->gerkon = this;
     set_data(std::to_string(SPEED));

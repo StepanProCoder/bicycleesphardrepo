@@ -13,9 +13,7 @@ class Host: public Connectable{
 public:
     Host();
     bool get_is_posted();
-    std::unique_ptr<ESP8266WebServer> server;
 private:
-    const char* hostname = "SpeedESP";
     bool is_posted = false;
     std::vector<std::unique_ptr<Sensor>> sensor_list; 
     void handle_root();
