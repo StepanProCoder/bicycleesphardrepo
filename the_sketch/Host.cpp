@@ -6,13 +6,23 @@ void Host::handle_root() {
         return;
     }
 
-    StaticJsonDocument<200> json_doc;
+    StaticJsonDocument<400> json_doc;
 
     // Create JSON array of sensors
     JsonArray json_array = json_doc.to<JsonArray>();
 
     // Add sensor data to JSON array
     for (const auto& sensor : sensor_list) {
+
+        if (sensor->get_sensor_type().c_str() == "geo" && server->hasArg("latitude") && server->hasArg("longitude")) {
+          String latitudeStr = server->arg("latitude");
+          String longitudeStr = server->arg("longitude");
+          GeoPoint geo_point = GeoPoint();
+          geo_point.latitude = latitudeStr.toDouble();
+          geo_point.longitude = longitudeStr.toDouble();
+          sensor->set_data(GeoSensor::geopoint_to_string(geo_point));
+        }
+
         JsonObject sensor_object = json_array.createNestedObject();
         sensor_object["sensor_type"] = sensor->get_sensor_type();
         sensor_object["data"] = sensor->get_data();

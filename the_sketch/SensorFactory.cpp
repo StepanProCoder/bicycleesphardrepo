@@ -6,6 +6,7 @@ std::vector<std::unique_ptr<Sensor>> createSensorsFromJson(const char* json) {
     std::vector<std::unique_ptr<Sensor>> sensors;
 
     sensors.push_back(std::make_unique<IdSensor>(std::optional<int>(), "id"));
+    sensors.push_back(std::make_unique<GeoSensor>(std::optional<int>(), "geo"));
 
     DynamicJsonDocument doc(1024);
     deserializeJson(doc, json);

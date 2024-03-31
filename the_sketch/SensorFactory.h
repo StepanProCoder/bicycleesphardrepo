@@ -10,6 +10,7 @@
 #include "Sensor.h"
 #include "Gerkon.h"
 #include "IdSensor.h"
+#include "GeoSensor.h"
 
 namespace SensorFactory {
 

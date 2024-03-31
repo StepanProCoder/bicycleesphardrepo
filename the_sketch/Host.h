@@ -8,6 +8,7 @@
 #include "Sensor.h"
 #include "Gerkon.h"
 #include "SensorFactory.h" 
+#include "GeoSensor.h"
 
 class Host: public Connectable{
 public:
