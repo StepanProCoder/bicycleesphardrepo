@@ -14,13 +14,14 @@ void Host::handle_root() {
     // Add sensor data to JSON array
     for (const auto& sensor : sensor_list) {
 
-        if (sensor->get_sensor_type().c_str() == "geo" && server->hasArg("latitude") && server->hasArg("longitude")) {
+        if (!strcmp(sensor->get_sensor_type().c_str(), "geo") && server->hasArg("latitude") && server->hasArg("longitude")) {
           String latitudeStr = server->arg("latitude");
           String longitudeStr = server->arg("longitude");
           GeoPoint geo_point = GeoPoint();
           geo_point.latitude = latitudeStr.toDouble();
           geo_point.longitude = longitudeStr.toDouble();
           sensor->set_data(GeoSensor::geopoint_to_string(geo_point));
+          Serial.println(sensor->get_data().c_str());
         }
 
         JsonObject sensor_object = json_array.createNestedObject();
